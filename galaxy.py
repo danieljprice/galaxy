@@ -16,15 +16,15 @@ def init(rmin,e):
     a = rmin*(1. - e)
     r = a*(1. + e)
     v0 = np.sqrt(a*(1. - e**2)*mtot)/r
-    x[0][:] = [-m2/mtot*r,0.,0.]
-    x[1][:] = [m1/mtot*r,0.,0.]
-    v[0][:] = [0.,-m2/mtot*v0,0.]
-    v[1][:] = [0.,m1/mtot*v0,0.]
+#    x[0][:] = [-m2/mtot*r,0.,0.]
+#    x[1][:] = [m1/mtot*r,0.,0.]
+#    v[0][:] = [0.,-m2/mtot*v0,0.]
+#    v[1][:] = [0.,m1/mtot*v0,0.]
     nb = 2
-    #x[0][:] = [0.,0.,0.]
-    #x[1][:] = [60.,0.,0.]
-    #v[0][:] = [0.,0.,0.]
-    #v[1][:] = [0.,0.4,0.]
+    x[0][:] = [0.,0.,0.]
+    x[1][:] = [0.,0.,-40.]
+    v[0][:] = [0.,0.,0.]
+    v[1][:] = [0.,0.,0.]
     x, v, nb = add_galaxy(nb,x[0][:],v[0][:],m1,5,0.,3.,x,v)
     return x,v,nb
 
@@ -78,36 +78,49 @@ dt = 1.
 #
 # set up figure
 #
-fig = plt.figure(figsize=(12,12))
-ax = plt.axes()
-ax.axis('square')
-ax.set_xlim(-100.,100.)
-ax.set_ylim(-100.,100.)
-bodies = []
+fig, (ax1, ax2) = plt.subplots(1,2,figsize=(12,6))
+ax1.axis('square')
+ax1.set_xlim(-100.,100.)
+ax1.set_ylim(-100.,100.)
+ax1.set_xlabel('x [Mpc]')
+ax1.set_ylabel('y [Mpc]')
+ax2.axis('square')
+ax2.set_xlim(-100.,100.)
+ax2.set_ylim(-100.,100.)
+ax2.set_xlabel('x [Mpc]')
+ax2.set_ylabel('z [Mpc]')
+xyplot = []
+xzplot = []
 #
 # plot two central bodies with large marker
 #
-body, = ax.plot([],[],color='black',marker='o',ms=markersize)
-bodies.append( body, )
-body, = ax.plot([],[],color='green',marker='o',ms=markersize)
-bodies.append( body, )
+colours = ['black','green']
+for j in range(2):
+    xy, = ax1.plot([],[],color=colours[j],marker='o',ms=markersize)
+    xz, = ax2.plot([],[],color=colours[j],marker='o',ms=markersize)
+    xyplot.append( xy, )
+    xzplot.append( xz, )
 #
 # plot other bodies with small markers, in blue
 #
 for j in range(nb-2):
-    body, = ax.plot([],[],color='blue',marker='o',ms=markersize/10)
-    bodies.append( body, )
+    xy, = ax1.plot([],[],color='blue',marker='o',ms=markersize/10)
+    xz, = ax2.plot([],[],color='blue',marker='o',ms=markersize/10)
+    xyplot.append( xy, )
+    xzplot.append( xz, )
 
 def init_anim():
     for j in range(nb):
-        bodies[j].set_data([],[])
+        xyplot[j].set_data([],[])
+        xzplot[j].set_data([],[])
     return
 
 def animate(i):
     global x,v,a
     x,v,a = step(x,v,a,dt)
     for j in range(nb):
-        bodies[j].set_data(x[j][0],x[j][1])
+        xyplot[j].set_data(x[j][0],x[j][1])
+        xzplot[j].set_data(x[j][0],x[j][2])
     return
 
 # call the animator.  blit=True means only re-draw the parts that have changed.
