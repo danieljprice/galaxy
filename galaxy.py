@@ -2,15 +2,14 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import animation
-markersize=50
-
-nb = 2
+markersize=10
+maxb = 122
 m1 = 1.0
 m2 = 1.0
 
 def init(rmin,e):
-    x = np.zeros((nb,3))
-    v = np.zeros((nb,3))
+    x = np.zeros((maxb,3))
+    v = np.zeros((maxb,3))
     mtot = m1 + m2
     #e = 0.8
     #rmin = 25.
@@ -21,21 +20,27 @@ def init(rmin,e):
     x[1][:] = [m1/mtot*r,0.,0.]
     v[0][:] = [0.,-m2/mtot*v0,0.]
     v[1][:] = [0.,m1/mtot*v0,0.]
-#    x[0][:] = [0.,0.,0.]
-#    x[1][:] = [60.,0.,0.]
-#    v[0][:] = [0.,0.,0.]
-#    v[1][:] = [0.,0.4,0.]
-    return x,v
+    nb = 2
+    #x[0][:] = [0.,0.,0.]
+    #x[1][:] = [60.,0.,0.]
+    #v[0][:] = [0.,0.,0.]
+    #v[1][:] = [0.,0.4,0.]
+    x, v, nb = add_galaxy(nb,x[0][:],v[0][:],m1,5,0.,3.,x,v)
+    return x,v,nb
 
-def add_galaxy(x,v,nrings,theta,dr):
-    for j in range(1,nrings):
-        r = j*dr
-        nphi = 12 + 6*(j-1)
+def add_galaxy(nb,x0,v0,m0,nrings,theta,dr,x,v):
+    for j in range(nrings):
+        r = (j+1)*dr
+        nphi = 12 + 6*j
         dphi = 2.*np.pi/nphi
-        for i in range(1,nphi):
-            phi = (i-1)*dphi
-            nb = nb + 1
-            x[:][nb] = x0[:] + [ri*np.cos(phi)*np.cos(theta),ri]
+        vphi = np.sqrt(m0/r) # keplerian rotation
+        for i in range(nphi):
+            phi = i*dphi
+            if (nb < maxb):
+               x[nb][:] = x0[:] + [r*np.cos(phi)*np.cos(theta),r*np.sin(phi),-r*np.cos(phi)*np.sin(theta)]
+               v[nb][:] = v0[:] + [-vphi*np.sin(phi)*np.cos(theta),vphi*np.cos(phi),vphi*np.sin(phi)*np.sin(theta)]
+               nb = nb + 1
+    return x,v,nb
 
 def step(x,v,a,dt):
     v = v + 0.5*dt*a
@@ -54,42 +59,61 @@ def get_accel(x):
     r, dx = get_sep(x[0][:],x[1][:])
     a[0][:] = m2/r**3*dx[:]
     a[1][:] = -m1/r**3*dx[:]
+    for j in range(2,nb):
+        r1, dx1 = get_sep(x[j][:],x[0][:])
+        r2, dx2 = get_sep(x[j][:],x[1][:])
+        a[j][:] = m1/r1**3*dx1[:] + m2/r2**3*dx2[:]
     return a
 
-fig = plt.figure()
-ax = plt.axes()
-ax.set_xlim(xmax=100)
-ax.axis('square')
-body1, = ax.plot([],[],color='black',marker='o',ms=markersize)
-body2, = ax.plot([],[],color='green',marker='o',ms=markersize)
+print("Welcome to the ultimate ASP2062 Galaxy simulator^TM")
+print("Written by Daniel Price, 2020")
 
-x,v = init(100.,0.5)
+#
+# set initial conditions and compute initial acceleration
+#
+x,v,nb = init(100.,0.5)
 a = get_accel(x)
-dt = 5.
+dt = 1.
+
+#
+# set up figure
+#
+fig = plt.figure(figsize=(12,12))
+ax = plt.axes()
+ax.axis('square')
+ax.set_xlim(-100.,100.)
+ax.set_ylim(-100.,100.)
+bodies = []
+#
+# plot two central bodies with large marker
+#
+body, = ax.plot([],[],color='black',marker='o',ms=markersize)
+bodies.append( body, )
+body, = ax.plot([],[],color='green',marker='o',ms=markersize)
+bodies.append( body, )
+#
+# plot other bodies with small markers, in blue
+#
+for j in range(nb-2):
+    body, = ax.plot([],[],color='blue',marker='o',ms=markersize/10)
+    bodies.append( body, )
 
 def init_anim():
-    body1.set_data([],[])
-    return body1,
+    for j in range(nb):
+        bodies[j].set_data([],[])
+    return
 
 def animate(i):
+    global x,v,a
     x,v,a = step(x,v,a,dt)
-    body1.set_data(x[0][0],x[0][1])
-    body2.set_data(x[1][0],x[1][1])
-    return body1,
-
-#for i in range(0,500):
-#    plt.xlim(-50.,50.)
-#    plt.ylim(-50.,50.)
-#    plt.gca().set_aspect('equal', adjustable='box')
-#    for body in range(0,nb):
-#        plt.scatter(x[body][0],x[body][1])
-
+    for j in range(nb):
+        bodies[j].set_data(x[j][0],x[j][1])
+    return
 
 # call the animator.  blit=True means only re-draw the parts that have changed.
 # Note: when using the Mac OS X Backend, blit=True will not work!!
 #       Need to manually set matplotlib.use('TkAgg') first....
 anim = animation.FuncAnimation(fig, animate, init_func=init_anim,
-                               frames=100, interval=1, blit=False)
+                               frames=1000, interval=1, blit=False)
+#anim.save('galaxies.mp4', writer="ffmpeg")
 plt.show()
-
-#print ("done")
