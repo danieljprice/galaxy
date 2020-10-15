@@ -1,5 +1,9 @@
 #!/opt/local/bin/python3
 import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib import animation
+markersize=50
+
 nb = 2
 m1 = 1.0
 m2 = 1.0
@@ -13,6 +17,10 @@ def init(rmin,e):
     a = rmin*(1. - e)
     r = a*(1. + e)
     v0 = np.sqrt(a*(1. - e**2)*mtot)/r
+    x[0][:] = [-m2/mtot*r,0.,0.]
+    x[1][:] = [m1/mtot*r,0.,0.]
+    v[0][:] = [0.,-m2/mtot*v0,0.]
+    v[1][:] = [0.,m1/mtot*v0,0.]
 #    x[0][:] = [0.,0.,0.]
 #    x[1][:] = [60.,0.,0.]
 #    v[0][:] = [0.,0.,0.]
@@ -38,9 +46,7 @@ def step(x,v,a,dt):
 
 def get_sep(x1,x2):
     dx = x2 - x1
-    print("got dx = ",dx)
     r = np.sqrt(np.dot(dx,dx))
-    print("got dx = ",dx," dr = ",r)
     return r,dx
 
 def get_accel(x):
@@ -50,40 +56,40 @@ def get_accel(x):
     a[1][:] = -m1/r**3*dx[:]
     return a
 
-x,v = init(25.,0.8)
-#print("x=",x,' v=',v)
+fig = plt.figure()
+ax = plt.axes()
+ax.set_xlim(xmax=100)
+ax.axis('square')
+body1, = ax.plot([],[],color='black',marker='o',ms=markersize)
+body2, = ax.plot([],[],color='green',marker='o',ms=markersize)
 
-#r, dx = getr(x[:][0],x[:][1])
-#print("r=",r,"dx=",dx)
-
-print("# x  y  z")
-print("%f %f %f" % (x[0][0],x[0][1],x[0][2]))
-
+x,v = init(100.,0.5)
 a = get_accel(x)
 dt = 5.
-import matplotlib.pyplot as plt
-for i in range(0,500):
-    print(i," pos body1",x[0][:])
-    print(i," pos body2",x[1][:])
-    print(i," v body1",v[0][:])
-    print(i," v body2",v[1][:])
-    print(i," a body1",a[0][:])
-    print(i," a body2",a[1][:])
 
+def init_anim():
+    body1.set_data([],[])
+    return body1,
+
+def animate(i):
     x,v,a = step(x,v,a,dt)
-    print(i," pos body1",x[0][:])
-    print(i," pos body2",x[1][:])
-    plt.xlim(-200.,200.)
-    plt.ylim(-200.,200.)
-    plt.scatter(x[:][0],x[:][1])
-    print("%f %f %f" % (x[0][0],x[0][1],x[0][2]))
+    body1.set_data(x[0][0],x[0][1])
+    body2.set_data(x[1][0],x[1][1])
+    return body1,
 
-plt.show()
+#for i in range(0,500):
+#    plt.xlim(-50.,50.)
+#    plt.ylim(-50.,50.)
+#    plt.gca().set_aspect('equal', adjustable='box')
+#    for body in range(0,nb):
+#        plt.scatter(x[body][0],x[body][1])
+
 
 # call the animator.  blit=True means only re-draw the parts that have changed.
 # Note: when using the Mac OS X Backend, blit=True will not work!!
 #       Need to manually set matplotlib.use('TkAgg') first....
-#anim = animation.FuncAnimation(fig, animate, init_func=init,
-#                               frames=n_frames, interval=1, blit=False)
+anim = animation.FuncAnimation(fig, animate, init_func=init_anim,
+                               frames=100, interval=1, blit=False)
+plt.show()
 
 #print ("done")
