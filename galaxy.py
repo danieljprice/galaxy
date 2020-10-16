@@ -48,7 +48,7 @@ def init():
     v[1][:] = v2
     x, v, nb = add_galaxy(nb,x[0][:],v[0][:],m1,nrings,0.,4.,x,v)
     a = get_accel(x,nb)
-    #print ("initialised ",nb," bodies")
+    print ("initialised ",nb," bodies")
     return (x,v,a,nb)
 
 def add_galaxy(nb,x0,v0,m0,nrings,theta,dr,x,v):
