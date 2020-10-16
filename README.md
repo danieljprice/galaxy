@@ -1,8 +1,10 @@
 # galaxy.py
 A simple tidal interaction code in Python (for educational use)
 
-This is a Python implementaion of a simple galaxy interaction code,
-based on the original paper by Toomre & Toomre (1972)
+This is a Python implementation of a simple galaxy interaction code,
+based on the original paper by Toomre & Toomre (1972). It runs a
+simple N-body integration of interacting galaxies, which is then
+plotted on-the-fly using matplotlib's animation functionality.
 
 A code with similar functionality is provided in the Appendix to Carroll & Ostlie, Introduction to Modern Astrophysics, but as a 32-bit Windows binary executable.
 The present code is designed to replace this, with the code in a language that modern Astronomy students are familiar with.
