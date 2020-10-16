@@ -24,14 +24,15 @@ x1 = [0.,0.,0.]
 x2 = [100.,0.,0.]
 v1 = [0.,0.,0.]
 v2 = [0.,0.,0.]
+time = 0.
 nrings = 5
 nsteps = 540
 markersize=10
-maxb = 122 # max number of bodies
+time_text = None
 xyplot = []
 xzplot = []
-time_text = None
-time = 0.
+maxb = 2 + 12*nrings + 6*sum(range(nrings)) # max number of bodies
+print(maxb)
 
 def init():
     """
@@ -47,7 +48,7 @@ def init():
     v[1][:] = v2
     x, v, nb = add_galaxy(nb,x[0][:],v[0][:],m1,nrings,0.,4.,x,v)
     a = get_accel(x,nb)
-    print ("initialised ",nb," bodies")
+    #print ("initialised ",nb," bodies")
     return (x,v,a,nb)
 
 def add_galaxy(nb,x0,v0,m0,nrings,theta,dr,x,v):
@@ -179,8 +180,8 @@ def animate(i):
     time_text.set_text("t="+str(time))
     return
 
-print("Welcome to the ultimate ASP2062 Galaxy simulator^TM")
-print("Written by Daniel Price, 2020")
+print("Welcome to The Ultimate ASP2062 Galaxy Simulator^TM")
+print("Written by Daniel Price, Monash University, 2020")
 
 #
 # set initial conditions and compute initial acceleration
