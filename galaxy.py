@@ -14,6 +14,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import animation
+#import matplotlib as mpl
+#mpl.use('TkAgg')
 """
   Parameters for the simulation
 """
@@ -162,7 +164,7 @@ def init_anim():
     for j in range(nb):
         xyplot[j].set_data([],[])
         xzplot[j].set_data([],[])
-    return
+    return #xyplot[0],xyplot[1],xzplot[0],xzplot[1],
 
 def animate(i):
     """
@@ -170,13 +172,15 @@ def animate(i):
        steps forward in time by dt and updates positions on the plot
     """
     global x,v,a,time
-    x,v,a = step(x,v,a,dt) # step forwards in time by dt
+    # step forwards in time by dt
     time += dt
-    for j in range(nb):    # update body positions on the plot
+    x,v,a = step(x,v,a,dt)
+    # update body positions on the plot
+    for j in range(nb):
         xyplot[j].set_data(x[j][0],x[j][1])
         xzplot[j].set_data(x[j][0],x[j][2])
     time_text.set_text("t="+str(time))
-    return
+    return #xyplot[0],xyplot[1],xzplot[0],xzplot[1],
 
 print("Welcome to The Ultimate Galaxy Simulator^TM")
 print("Written by Daniel Price, Monash University, 2020")
@@ -190,7 +194,7 @@ fig = init_plotting()
 # call the animator.  blit=True means only re-draw the parts that have changed.
 # Note: when using the Mac OS X Backend, blit=True will not work!!
 #       Need to manually set matplotlib.use('TkAgg') first....
-anim = animation.FuncAnimation(fig, animate, init_func=init_anim,
+anim = animation.FuncAnimation(fig, animate, init_func=init_anim, repeat=False,
                                frames=nsteps, interval=1, blit=False)
 
 #
