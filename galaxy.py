@@ -32,7 +32,6 @@ time_text = None
 xyplot = []
 xzplot = []
 maxb = 2 + 12*nrings + 6*sum(range(nrings)) # max number of bodies
-print(maxb)
 
 def init():
     """
@@ -48,7 +47,6 @@ def init():
     v[1][:] = v2
     x, v, nb = add_galaxy(nb,x[0][:],v[0][:],m1,nrings,0.,4.,x,v)
     a = get_accel(x,nb)
-    print ("initialised ",nb," bodies")
     return (x,v,a,nb)
 
 def add_galaxy(nb,x0,v0,m0,nrings,theta,dr,x,v):
@@ -68,7 +66,7 @@ def add_galaxy(nb,x0,v0,m0,nrings,theta,dr,x,v):
     """
     for j in range(nrings):
         r = (j+1)*dr
-        nphi = 12 + 6*j
+        nphi = 12 + 6*j # see also formula for maxb
         dphi = 2.*np.pi/nphi
         vphi = np.sqrt(m0/r)  # assume Keplerian rotation
         for i in range(nphi):
