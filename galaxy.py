@@ -178,7 +178,7 @@ def animate(i):
     time_text.set_text("t="+str(time))
     return
 
-print("Welcome to The Ultimate ASP2062 Galaxy Simulator^TM")
+print("Welcome to The Ultimate Galaxy Simulator^TM")
 print("Written by Daniel Price, Monash University, 2020")
 
 #
