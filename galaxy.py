@@ -14,23 +14,27 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import animation
-#import matplotlib as mpl
-#mpl.use('TkAgg')
-"""
-  Parameters for the simulation
-"""
-m1 = 1.0
-m2 = 0.0
-dt = 1.
-x1 = [0.,0.,0.]
-x2 = [100.,0.,0.]
-v1 = [0.,0.,0.]
-v2 = [0.,0.,0.]
-time = 0.
-nrings = 5
+#
+# Parameters for the simulation
+#
+m1 = 5.0
+m2 = 0.25*m1
+x2 = [30.,-30.,0.]
+v2 = [0.,0.34,0.34]
+nrings = 6
 nsteps = 540
+#
+# Other parameters, do not need to change these (but feel free to play)
+#
+x1 = [0.,0.,0.]
+v1 = [0.,0.,0.]
+dt = 1.
+dr = 15./(nrings-1) # spacing between rings
 markersize=10
-time_text = None
+#
+# initialise various quantities
+#
+time = 0.
 xyplot = []
 xzplot = []
 maxb = 2 + 12*nrings + 6*sum(range(nrings)) # max number of bodies
@@ -47,7 +51,7 @@ def init():
     x[1][:] = x2
     v[0][:] = v1
     v[1][:] = v2
-    x, v, nb = add_galaxy(nb,x[0][:],v[0][:],m1,nrings,0.,4.,x,v)
+    x, v, nb = add_galaxy(nb,x[0][:],v[0][:],m1,nrings,0.,dr,x,v)
     a = get_accel(x,nb)
     return (x,v,a,nb)
 
@@ -67,7 +71,7 @@ def add_galaxy(nb,x0,v0,m0,nrings,theta,dr,x,v):
          x, v   : position and velocity arrays for all bodies
     """
     for j in range(nrings):
-        r = (j+1)*dr
+        r = 5. + j*dr
         nphi = 12 + 6*j # see also formula for maxb
         dphi = 2.*np.pi/nphi
         vphi = np.sqrt(m0/r)  # assume Keplerian rotation
@@ -191,6 +195,11 @@ print("Written by Daniel Price, Monash University, 2020")
 x,v,a,nb = init()
 fig = init_plotting()
 
+#animate(1)
+#fig.savefig("setup.eps")
+#plt.show()
+#exit()
+
 # call the animator.  blit=True means only re-draw the parts that have changed.
 # Note: when using the Mac OS X Backend, blit=True will not work!!
 #       Need to manually set matplotlib.use('TkAgg') first....
@@ -202,4 +211,5 @@ anim = animation.FuncAnimation(fig, animate, init_func=init_anim, repeat=False,
 # you will need to have ffmpeg installed, e.g. using "sudo apt install ffmpeg"
 #
 #anim.save('galaxies.mp4', writer="ffmpeg")
+#anim.save('galaxies.gif', writer="imagemagick")
 plt.show()
