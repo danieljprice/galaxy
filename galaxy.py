@@ -23,9 +23,6 @@ x2 = [30.,-30.,0.]
 v2 = [0.,0.34,0.34]
 nrings = 6
 nsteps = 540
-#
-# Other parameters, do not need to change these (but feel free to play)
-#
 x1 = [0.,0.,0.]
 v1 = [0.,0.,0.]
 dt = 1.
@@ -168,7 +165,7 @@ def init_anim():
     for j in range(nb):
         xyplot[j].set_data([],[])
         xzplot[j].set_data([],[])
-    return #xyplot[0],xyplot[1],xzplot[0],xzplot[1],
+    return
 
 def animate(i):
     """
@@ -184,7 +181,7 @@ def animate(i):
         xyplot[j].set_data(x[j][0],x[j][1])
         xzplot[j].set_data(x[j][0],x[j][2])
     time_text.set_text("t="+str(time))
-    return #xyplot[0],xyplot[1],xzplot[0],xzplot[1],
+    return
 
 print("Welcome to The Ultimate Galaxy Simulator^TM")
 print("Written by Daniel Price, Monash University, 2020")
@@ -194,11 +191,6 @@ print("Written by Daniel Price, Monash University, 2020")
 #
 x,v,a,nb = init()
 fig = init_plotting()
-
-#animate(1)
-#fig.savefig("setup.eps")
-#plt.show()
-#exit()
 
 # call the animator.  blit=True means only re-draw the parts that have changed.
 # Note: when using the Mac OS X Backend, blit=True will not work!!
