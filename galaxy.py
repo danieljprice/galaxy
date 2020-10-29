@@ -183,25 +183,32 @@ def animate(i):
     time_text.set_text("t="+str(time))
     return
 
-print("Welcome to The Ultimate Galaxy Simulator^TM")
-print("Written by Daniel Price, Monash University, 2020")
+def run():
+    """
+       routine to put everything together
+       i.e. generate initial conditions followed by call to animate
+    """
+    print("Welcome to The Ultimate Galaxy Simulator^TM")
+    print("Written by Daniel Price, Monash University, 2020")
+    global x,v,a,nb
+    #
+    # set initial conditions and compute initial acceleration
+    #
+    x,v,a,nb = init()
+    fig = init_plotting()
 
-#
-# set initial conditions and compute initial acceleration
-#
-x,v,a,nb = init()
-fig = init_plotting()
+    # call the animator.  blit=True means only re-draw the parts that have changed.
+    # Note: when using the Mac OS X Backend, blit=True will not work!!
+    #       Need to manually set matplotlib.use('TkAgg') first....
+    anim = animation.FuncAnimation(fig, animate, init_func=init_anim, repeat=False,
+                                   frames=nsteps, interval=10, blit=False)
+    #
+    # uncomment the following line to save your animation as an mp4
+    # you will need to have ffmpeg installed, e.g. using "sudo apt install ffmpeg"
+    #
+    #anim.save('galaxies.mp4', writer="ffmpeg")
+    #anim.save('galaxies.gif', writer="imagemagick")
+    plt.show()
+    return
 
-# call the animator.  blit=True means only re-draw the parts that have changed.
-# Note: when using the Mac OS X Backend, blit=True will not work!!
-#       Need to manually set matplotlib.use('TkAgg') first....
-anim = animation.FuncAnimation(fig, animate, init_func=init_anim, repeat=False,
-                               frames=nsteps, interval=1, blit=False)
-
-#
-# uncomment the following line to save your animation as an mp4
-# you will need to have ffmpeg installed, e.g. using "sudo apt install ffmpeg"
-#
-#anim.save('galaxies.mp4', writer="ffmpeg")
-#anim.save('galaxies.gif', writer="imagemagick")
-plt.show()
+run()
