@@ -178,8 +178,8 @@ def animate(i):
     x,v,a = step(x,v,a,dt)
     # update body positions on the plot
     for j in range(nb):
-        xyplot[j].set_data(x[j][0],x[j][1])
-        xzplot[j].set_data(x[j][0],x[j][2])
+        xyplot[j].set_data([x[j][0]],[x[j][1]])
+        xzplot[j].set_data([x[j][0]],[x[j][2]])
     time_text.set_text("t="+str(time))
     return
 
